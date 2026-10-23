@@ -1,0 +1,12 @@
+.gradle/
+**/build/
+/target/
+local.properties
+.idea/
+*.iml
+*.jks
+*.keystore
+.env
+.env.*
+/device-captures/
+/artifacts/
