@@ -12,11 +12,10 @@ import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -38,6 +37,7 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
     private var guardedPackage = ""
     private var replaying = false
     private var connected = false
+    private var diagnostic = "starting"
     private var blockedWarnings = 0
     private var forwardedTaps = 0
     private val refresh = Runnable { refreshProtection() }
@@ -85,17 +85,17 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
         if (!connected || replaying) return
         if (!NativeBridge.available || !settings.enabled) { removeGuard(); return }
         runCatching {
-            val root = rootInActiveWindow ?: run { removeGuard(); return }
+            val root = rootInActiveWindow ?: run { diagnostic = "no active root"; removeGuard(); return }
             try {
                 val pkg = root.packageName?.toString().orEmpty()
+                diagnostic = "foreground=$pkg"
                 if (pkg != "com.google.android.youtube" && pkg != "com.instagram.android") { removeGuard(); return }
                 val nodes = JSONArray()
                 var visited = 0
                 fun collect(node: AccessibilityNodeInfo, depth: Int) {
                     if (++visited > 600 || depth > 40) return
-                    if (!node.isVisibleToUser) return
                     val bounds = Rect(); node.getBoundsInScreen(bounds)
-                    node.viewIdResourceName?.let { id ->
+                    node.viewIdResourceName?.takeIf { node.isVisibleToUser }?.let { id ->
                         nodes.put(JSONObject().put("id", id.take(180)).put("bounds", bounds.json()))
                     }
                     for (i in 0 until node.childCount.coerceAtMost(100)) {
@@ -104,19 +104,23 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
                     }
                 }
                 collect(root, 0)
+                diagnostic = "package=$pkg visited=$visited nodes=${nodes.length()}"
                 if (visited > 600) { removeGuard(); return }
                 val screen = wm.currentWindowMetrics.bounds
                 val input = JSONObject().put("package", pkg).put("enabled", settings.enabled)
                     .put("youtube", settings.enabledFor("youtube")).put("instagram", settings.enabledFor("instagram"))
                     .put("width", screen.width()).put("height", screen.height()).put("nodes", nodes)
                 val decision = JSONObject(NativeBridge.evaluate(input.toString()) ?: "{}")
+                diagnostic += " active=${decision.optBoolean("active")}"
                 if (!decision.optBoolean("active")) { removeGuard(); return }
                 val b = decision.getJSONObject("bounds")
                 val rect = Rect(b.getInt("left"), b.getInt("top"), b.getInt("right"), b.getInt("bottom"))
+                val bars = wm.currentWindowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+                rect.intersect(Rect(bars.left, bars.top, screen.width() - bars.right, screen.height() - bars.bottom))
                 if (rect.isEmpty) { removeGuard(); return }
                 installGuard(rect, pkg)
             } finally { root.recycle() }
-        }.onFailure { removeGuard() }
+        }.onFailure { diagnostic = "failure=${it.javaClass.simpleName}"; removeGuard() }
     }
     private fun Rect.json() = JSONObject().put("left", left).put("top", top).put("right", right).put("bottom", bottom)
     private fun dp(value: Int) = (resources.displayMetrics.density * value).toInt()
@@ -128,7 +132,7 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
         gravity = Gravity.TOP or Gravity.LEFT
         x = bounds.left; y = bounds.top
         title = "Doomscrolling swipe guard"
-        if (android.os.Build.VERSION.SDK_INT >= 28) layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
     }
     private fun installGuard(bounds: Rect, pkg: String) {
         val existing = guard
@@ -179,9 +183,9 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
             var visited = 0
             var prohibited = false
             fun find(node: AccessibilityNodeInfo, depth: Int) {
-                if (++visited > 600 || depth > 40 || !node.isVisibleToUser) return
+                if (++visited > 600 || depth > 40) return
                 val b = Rect(); node.getBoundsInScreen(b)
-                if (b.contains(x.toInt(), y.toInt())) {
+                if (node.isVisibleToUser && b.contains(x.toInt(), y.toInt())) {
                     val id = node.viewIdResourceName.orEmpty()
                     if (id.endsWith("/reel_next_reel_button") || id.endsWith("/reel_previous_reel_button")) prohibited = true
                     val a = b.width().toLong() * b.height()
@@ -233,6 +237,7 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
     override fun dump(fd: FileDescriptor, writer: PrintWriter, args: Array<out String>?) {
         writer.println("Doomscrolling connected=$connected engine=${NativeBridge.available}")
         writer.println("guard=${guard != null} package=$guardedPackage bounds=$guardedBounds replaying=$replaying")
+        writer.println(diagnostic)
         writer.println("warningCount=$blockedWarnings forwardedTaps=$forwardedTaps")
     }
 }
