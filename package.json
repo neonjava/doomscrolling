@@ -1,0 +1,11 @@
+{
+  "name": "doomscrolling-website",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "dev": "python3 scripts/serve_web.py",
+    "test:web": "node scripts/test_web.mjs"
+  },
+  "devDependencies": { "@playwright/test": "1.56.1" }
+}
