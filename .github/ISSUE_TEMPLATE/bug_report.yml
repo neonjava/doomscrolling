@@ -1,0 +1,36 @@
+name: Bug Report
+description: Report an issue with viewer detection, swipe blocking, or app compatibility.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue!
+        **Important:** Never paste screenshots containing private messages, account passwords, or personal details.
+  - type: input
+    id: device_info
+    attributes:
+      label: Device and Android Version
+      placeholder: e.g. Nothing Phone (2a) / Android 16 / Nothing OS 3.0
+    validations:
+      required: true
+  - type: input
+    id: app_versions
+    attributes:
+      label: Target App & Version
+      placeholder: e.g. YouTube v21.42.243 or Instagram v452.0.0.48.64
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: Did a swipe slip through, or did a regular feed get blocked?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
