@@ -8,7 +8,7 @@ android {
     ndkVersion = "28.2.13676358"
     defaultConfig {
         applicationId = "dev.neonjava.doomscrolling"
-        minSdk = 26
+        minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"

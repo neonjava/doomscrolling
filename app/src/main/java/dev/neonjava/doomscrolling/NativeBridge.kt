@@ -7,4 +7,7 @@ object NativeBridge {
         protocolVersion() == 1
     }.getOrDefault(false)
     external fun protocolVersion(): Int
+    external fun evaluate(snapshot: String): String?
+    external fun touch(action: Int, x: Float, y: Float, time: Long, slop: Float): Int
+    external fun reset()
 }
