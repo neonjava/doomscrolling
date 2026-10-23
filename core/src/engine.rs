@@ -52,6 +52,13 @@ pub fn detect(s: &Snapshot) -> Decision {
                 .or_else(|| node(s, "reel_watch_player"))
                 .map(|n| n.bounds)
         }
+        "com.instagram.android" if s.instagram => {
+            // Feed videos also expose clips media nodes; only the dedicated viewer pager qualifies.
+            if node(s, "clips_item_overlay_component").is_none() {
+                return Decision::default();
+            }
+            node(s, "clips_viewer_view_pager").map(|n| n.bounds)
+        }
         _ => None,
     };
     let Some(mut bounds) = candidate else {
@@ -283,5 +290,83 @@ mod tests {
         e.touch(0, 0.0, 0.0, 0, 12.0);
         e.set_active(false);
         assert_eq!(e.touch(1, 0.0, 0.0, 20, 12.0), 0);
+    }
+}
+
+#[cfg(test)]
+mod instagram_tests {
+    use super::*;
+    fn snapshot() -> Snapshot {
+        Snapshot {
+            package: "com.instagram.android".into(),
+            enabled: true,
+            youtube: true,
+            instagram: true,
+            width: 1080,
+            height: 2400,
+            nodes: vec![
+                Node {
+                    id: "com.instagram.android:id/clips_viewer_view_pager".into(),
+                    bounds: Bounds {
+                        left: 0,
+                        top: 126,
+                        right: 1080,
+                        bottom: 2196,
+                    },
+                },
+                Node {
+                    id: "com.instagram.android:id/clips_item_overlay_component".into(),
+                    bounds: Bounds {
+                        left: 0,
+                        top: 126,
+                        right: 1080,
+                        bottom: 2196,
+                    },
+                },
+            ],
+        }
+    }
+    #[test]
+    fn reels_viewer_is_guarded_but_feed_is_not() {
+        let mut s = snapshot();
+        assert!(detect(&s).active);
+        s.nodes[0].id = "com.instagram.android:id/swipeable_tab_view_pager".into();
+        assert!(!detect(&s).active);
+    }
+    #[test]
+    fn instagram_switch_does_not_depend_on_youtube() {
+        let mut s = snapshot();
+        s.youtube = false;
+        assert!(detect(&s).active);
+        s.instagram = false;
+        assert!(!detect(&s).active);
+    }
+    #[test]
+    fn full_height_comments_remove_guard() {
+        let mut s = snapshot();
+        s.nodes.push(Node {
+            id: "com.instagram.android:id/bottom_sheet_container".into(),
+            bounds: Bounds {
+                left: 0,
+                top: 126,
+                right: 1080,
+                bottom: 2340,
+            },
+        });
+        assert!(!detect(&s).active);
+    }
+    #[test]
+    fn partial_sheet_leaves_exposed_video_guarded() {
+        let mut s = snapshot();
+        s.nodes.push(Node {
+            id: "com.instagram.android:id/bottom_sheet_container".into(),
+            bounds: Bounds {
+                left: 0,
+                top: 900,
+                right: 1080,
+                bottom: 2340,
+            },
+        });
+        assert_eq!(detect(&s).bounds.bottom, 900);
     }
 }
