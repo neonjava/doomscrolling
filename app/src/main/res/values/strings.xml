@@ -1,0 +1,3 @@
+<resources>
+    <string name="accessibility_description">Recognizes YouTube Shorts and Instagram Reels to block swipes between videos. Screen structure is processed locally and is not stored or sent. Normal feeds remain usable.</string>
+</resources>
