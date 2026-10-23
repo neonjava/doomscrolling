@@ -1,3 +1,35 @@
 <resources>
+    <string name="app_name">Doomscrolling</string>
     <string name="accessibility_description">Recognizes YouTube Shorts and Instagram Reels to block swipes between videos. Screen structure is processed locally and is not stored or sent. Normal feeds remain usable.</string>
+    <string name="local_badge">ON DEVICE</string>
+    <string name="hero_title">One video.\nYour choice.</string>
+    <string name="hero_subtitle">Enjoy the one you opened.\nTake a breath before the next.</string>
+    <string name="protection_title">Protection</string>
+    <string name="status_setup">One step left to get started</string>
+    <string name="protected_apps">PROTECTED APPS</string>
+    <string name="youtube">YouTube</string>
+    <string name="instagram">Instagram</string>
+    <string name="shorts_only">Shorts · feeds stay free</string>
+    <string name="reels_only">Reels · feeds stay free</string>
+    <string name="setup_access">Set up accessibility access</string>
+    <string name="accessibility_access">Accessibility access</string>
+    <string name="chevron">›</string>
+    <string name="behavior_note">Video swipes stop. Normal feeds keep moving.\nYou can leave a video whenever you want.</string>
+    <string name="source_link">Open source · AGPLv3 ↗</string>
+    <string name="permission_title">Your phone. Your control.</string>
+    <string name="permission_explanation">Doomscrolling reads screen structure in YouTube and Instagram to recognize short-video viewers and intercept swipes. It processes this on your phone and does not save or send viewing content.\n\nIn Settings, select Doomscrolling and enable it. You can turn it off at any time.\n\nIf Android shows “Restricted setting”, open this app’s App info → menu → Allow restricted settings, then return here.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="status_active">Protection is on</string>
+    <string name="status_paused">Protection paused</string>
+    <string name="status_engine_error">Engine unavailable · reinstall the app</string>
+    <string name="status_pause_detail">Turn it on when you are ready</string>
+    <string name="status_choose_apps">Choose an app to protect</string>
+    <string name="status_active_detail">Your next swipe is covered</string>
+    <string name="access_enabled">Enabled · managed in Settings</string>
+    <string name="access_required">Required · tap to set up</string>
+    <string name="swipe_warning">You are doom scrolling</string>
+    <string name="appearance">APPEARANCE</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

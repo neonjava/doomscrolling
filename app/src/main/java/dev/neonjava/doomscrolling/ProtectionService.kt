@@ -116,7 +116,7 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
                 val b = decision.getJSONObject("bounds")
                 val rect = Rect(b.getInt("left"), b.getInt("top"), b.getInt("right"), b.getInt("bottom"))
                 val bars = wm.currentWindowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-                rect.intersect(Rect(bars.left, bars.top, screen.width() - bars.right, screen.height() - bars.bottom))
+                if (!rect.intersect(Rect(bars.left, bars.top, screen.width() - bars.right, screen.height() - bars.bottom))) { removeGuard(); return }
                 if (rect.isEmpty) { removeGuard(); return }
                 installGuard(rect, pkg)
             } finally { root.recycle() }
@@ -144,10 +144,10 @@ class ProtectionService : AccessibilityService(), SharedPreferences.OnSharedPref
             setBackgroundColor(Color.TRANSPARENT)
         }
         val label = TextView(this).apply {
-            text = "You are doom scrolling"
+            setText(R.string.swipe_warning)
             textSize = 16f; setTextColor(Color.WHITE); gravity = Gravity.CENTER
             setPadding(dp(20), dp(14), dp(20), dp(14))
-            background = GradientDrawable().apply { setColor(Color.rgb(24, 54, 47)); cornerRadius = dp(18).toFloat() }
+            background = GradientDrawable().apply { setColor(Color.argb(244, 26, 35, 49)); setStroke(dp(1), Color.argb(70, 154, 205, 219)); cornerRadius = dp(24).toFloat() }
             visibility = View.INVISIBLE
         }
         container.addView(label, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL or Gravity.TOP).apply { topMargin = dp(84) })

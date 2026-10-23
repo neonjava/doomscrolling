@@ -7,6 +7,9 @@ class ProtectionSettings(context: Context) {
     var enabled: Boolean
         get() = preferences.getBoolean("enabled", true)
         set(value) { preferences.edit().putBoolean("enabled", value).apply() }
+    var themeMode: String
+        get() = preferences.getString("theme_mode", "system") ?: "system"
+        set(value) { preferences.edit().putString("theme_mode", value).apply() }
     fun enabledFor(key: String) = preferences.getBoolean(key, true)
     fun setEnabledFor(key: String, value: Boolean) { preferences.edit().putBoolean(key, value).apply() }
 }
