@@ -1,22 +1,67 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "",
+  "buildCommand": "bash scripts/build_web.sh",
   "installCommand": "",
-  "outputDirectory": "web",
-  "cleanUrls": true,
+  "outputDirectory": "flutter_ui/build/web",
   "trailingSlash": false,
   "redirects": [
-    { "source": "/download", "destination": "/Doomscrolling-v0.1.0.apk", "permanent": false },
-    { "source": "/apk", "destination": "/Doomscrolling-v0.1.0.apk", "permanent": false },
-    { "source": "/github", "destination": "https://github.com/neonjava/doomscrolling", "permanent": false }
+    {
+      "source": "/download",
+      "destination": "/Doomscrolling-v0.1.0.apk",
+      "permanent": false
+    },
+    {
+      "source": "/apk",
+      "destination": "/Doomscrolling-v0.1.0.apk",
+      "permanent": false
+    },
+    {
+      "source": "/github",
+      "destination": "https://github.com/neonjava/doomscrolling",
+      "permanent": false
+    }
   ],
   "headers": [
-    { "source": "/(.*)", "headers": [
-      { "key": "X-Content-Type-Options", "value": "nosniff" },
-      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-      { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-      { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" }
-    ]}
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/(index.html|flutter_bootstrap.js|main.dart.js)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/open-source",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/index.html"
+    }
   ]
 }

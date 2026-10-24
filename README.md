@@ -3,6 +3,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Platform](https://img.shields.io/badge/Platform-Android_11+-green.svg)](https://developer.android.com)
 [![Rust Core](https://img.shields.io/badge/Engine-Rust_1.85+-orange.svg)](https://www.rust-lang.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-Flutter_3-02569B.svg)](https://flutter.dev)
 [![Vercel Ready](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://vercel.com)
 
 **One video. Your choice.**

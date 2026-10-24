@@ -4,14 +4,14 @@ plugins {
 }
 android {
     namespace = "dev.neonjava.doomscrolling"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "28.2.13676358"
     defaultConfig {
         applicationId = "dev.neonjava.doomscrolling"
         minSdk = 30
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,6 +33,7 @@ val buildRust by tasks.registering(Exec::class) {
 tasks.named("preBuild") { dependsOn(buildRust) }
 
 dependencies {
+    implementation(project(":flutter"))
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }

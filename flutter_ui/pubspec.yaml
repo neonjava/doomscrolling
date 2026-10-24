@@ -1,0 +1,30 @@
+name: doomscrolling_ui
+description: Flutter app and website for the Rust-powered Doomscrolling blocker.
+publish_to: none
+version: 0.2.0+2
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  cupertino_icons: 1.0.8
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: DoomSans
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+  module:
+    androidX: true
+    androidPackage: dev.neonjava.doomscrolling_ui
+    iosBundleIdentifier: dev.neonjava.doomscrollingUi
